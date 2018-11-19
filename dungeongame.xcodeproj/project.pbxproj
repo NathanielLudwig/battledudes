@@ -17,6 +17,8 @@
 		B7200F49219A029B006393C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7200F47219A029B006393C2 /* LaunchScreen.storyboard */; };
 		B7200F54219A029C006393C2 /* dungeongameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7200F53219A029C006393C2 /* dungeongameTests.swift */; };
 		B7200F5F219A029C006393C2 /* dungeongameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7200F5E219A029C006393C2 /* dungeongameUITests.swift */; };
+		B7200F6D219A02C8006393C2 /* tiles.sks in Resources */ = {isa = PBXBuildFile; fileRef = B7200F6C219A02C8006393C2 /* tiles.sks */; };
+		B7200F6F219B447C006393C2 /* MyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = B7200F6E219B447C006393C2 /* MyTileSet.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		B7200F5A219A029C006393C2 /* dungeongameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dungeongameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7200F5E219A029C006393C2 /* dungeongameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dungeongameUITests.swift; sourceTree = "<group>"; };
 		B7200F60219A029C006393C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B7200F6C219A02C8006393C2 /* tiles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = tiles.sks; sourceTree = "<group>"; };
+		B7200F6E219B447C006393C2 /* MyTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyTileSet.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,8 @@
 				B7200F45219A029B006393C2 /* Assets.xcassets */,
 				B7200F47219A029B006393C2 /* LaunchScreen.storyboard */,
 				B7200F4A219A029B006393C2 /* Info.plist */,
+				B7200F6C219A02C8006393C2 /* tiles.sks */,
+				B7200F6E219B447C006393C2 /* MyTileSet.sks */,
 			);
 			path = dungeongame;
 			sourceTree = "<group>";
@@ -241,8 +247,10 @@
 				B7200F44219A029A006393C2 /* Main.storyboard in Resources */,
 				B7200F3B219A029A006393C2 /* GameScene.sks in Resources */,
 				B7200F46219A029B006393C2 /* Assets.xcassets in Resources */,
+				B7200F6F219B447C006393C2 /* MyTileSet.sks in Resources */,
 				B7200F49219A029B006393C2 /* LaunchScreen.storyboard in Resources */,
 				B7200F3D219A029A006393C2 /* Actions.sks in Resources */,
+				B7200F6D219A02C8006393C2 /* tiles.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
