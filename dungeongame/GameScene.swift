@@ -142,10 +142,10 @@ class GameScene: SKScene {
         let halfwidth = CGFloat(map.numberOfColumns) / 2.0 * map.tileSize.width
         for col in 0 ..< map.numberOfColumns {
             for row in 0..<map.numberOfRows {
-                //djfajdflka;sdjflka;sdfjakl;sj
+                
                 let tiledefintion = map.tileDefinition(atColumn: col, row: row)
                 
-                if tiledefintion?.name == "lava_0" {
+                if tiledefintion?.name == "wall" {
                 let x = CGFloat(col) * map.tileSize.width - halfwidth + (map.tileSize.width / 2)
                 let y = CGFloat(row) * map.tileSize.height - halfheight + (map.tileSize.height / 2)
                 let tilesprite = SKSpriteNode(color: UIColor.clear, size: map.tileSize)
