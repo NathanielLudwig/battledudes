@@ -9,7 +9,8 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene , SKPhysicsContactDelegate{
+    
     var dude = SKSpriteNode()
     var upbutton = SKSpriteNode()
     var leftbutton = SKSpriteNode()
@@ -23,6 +24,9 @@ class GameScene: SKScene {
     var rightanimation: [SKTexture] = []
     let runningkey = "action_running"
     var levelmap:SKTileMapNode = SKTileMapNode()
+    var attackbutton = SKSpriteNode()
+    var sword = SKSpriteNode()
+    
     
     
     override func didMove(to view: SKView) {
@@ -31,6 +35,10 @@ class GameScene: SKScene {
         leftbutton = camera?.childNode(withName: "left") as! SKSpriteNode
         rightbutton = camera?.childNode(withName: "right") as! SKSpriteNode
         downbutton = camera?.childNode(withName: "down") as! SKSpriteNode
+        attackbutton = camera?.childNode(withName: "attack") as! SKSpriteNode
+        sword = dude.childNode(withName: "sword") as! SKSpriteNode
+        sword.position = CGPoint(x: dude.frame.midX, y: dude.frame.midY)
+        
         for i in 0..<3 {
             upanimation.append(SKTexture(imageNamed: "up_\(i)"))
             downanimation.append(SKTexture(imageNamed: "down_\(i)"))
@@ -44,13 +52,30 @@ class GameScene: SKScene {
             
         }
         givePhysicsBody(map: levelmap)
+        //sword.removeFromParent()
+        sword.isHidden = true
+       
     }
     
+    func showsword(){
+        
+        let wait = SKAction.wait(forDuration: 0.5)
+        let show = SKAction.unhide()
+        let hide = SKAction.hide()
+        //sword.run(showaction)
+       
+        sword.run(SKAction.sequence([show,wait, hide]))
+       
+    }
    
     func handletouches(touches: Set<UITouch>){
         guard let touch = touches.first else {return}
         let touchlocation = touch.location(in: camera!)
-      
+        if attackbutton.contains(touchlocation) {
+            
+            showsword()
+            
+        }
         if upbutton.contains(touchlocation) {
             
             dudeVert = 1
@@ -59,7 +84,7 @@ class GameScene: SKScene {
                                  timePerFrame: 0.1,
                                  resize: false,
                                  restore: false)), withKey: runningkey)
-            
+            sword.zRotation = 0
         }
         if downbutton.contains(touchlocation){
             dudeVert = -1
@@ -68,7 +93,7 @@ class GameScene: SKScene {
                                  timePerFrame: 0.1,
                                  resize: false,
                                  restore: false)), withKey: runningkey)
-            
+            sword.zRotation = CGFloat.pi
            
         }
         if rightbutton.contains(touchlocation){
@@ -80,6 +105,9 @@ class GameScene: SKScene {
                                  resize: false,
                                  restore: false)))
             
+            sword.zRotation = -(CGFloat.pi / 2)
+            
+        
         }
         if leftbutton.contains(touchlocation){
             dudeHorz = -1
@@ -88,7 +116,7 @@ class GameScene: SKScene {
                                  timePerFrame: 0.1,
                                  resize: false,
                                  restore: false)))
-            
+             
             
         }
     }
@@ -104,9 +132,12 @@ class GameScene: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //handletouches(touches: touches)
+        let touchlocation = touches.first?.location(in: camera!)
+        if upbutton.contains(touchlocation!) || leftbutton.contains(touchlocation!) || rightbutton.contains(touchlocation!) || downbutton.contains(touchlocation!) {
         dudeVert = 0
         dudeHorz = 0
         removeAllActions()
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -123,14 +154,13 @@ class GameScene: SKScene {
         dude.position.y += CGFloat(dudeVert)
         dude.position.x += CGFloat(dudeHorz)
         camera?.position = dude.position
-        
+        if sword.isHidden == false{
+            
+        }
        
         
         
     }
-    
-    
-    
     
     
     
@@ -142,18 +172,24 @@ class GameScene: SKScene {
         let halfwidth = CGFloat(map.numberOfColumns) / 2.0 * map.tileSize.width
         for col in 0 ..< map.numberOfColumns {
             for row in 0..<map.numberOfRows {
-                //djfajdflka;sdjflka;sdfjakl;sj
-                let tiledefintion = map.tileDefinition(atColumn: col, row: row)
                 
-                if tiledefintion?.name == "lava_0" {
+                let tiledefintion = map.tileDefinition(atColumn: col, row: row)
                 let x = CGFloat(col) * map.tileSize.width - halfwidth + (map.tileSize.width / 2)
                 let y = CGFloat(row) * map.tileSize.height - halfheight + (map.tileSize.height / 2)
+                if tiledefintion?.name == "stone_1"{
+                    
+                }
+                if tiledefintion?.name == "wall" {
+                    
+                
                 let tilesprite = SKSpriteNode(color: UIColor.clear, size: map.tileSize)
                 tilesprite.position = CGPoint(x: x, y: y)
                 tilesprite.physicsBody = SKPhysicsBody(rectangleOf: map.tileSize)
                 tilesprite.physicsBody?.affectedByGravity = false
                 tilesprite.physicsBody?.pinned = true
                 tilesprite.physicsBody?.allowsRotation = false
+                tilesprite.physicsBody?.categoryBitMask = UInt32(2)
+                tilesprite.physicsBody?.collisionBitMask = UInt32(2)
                 self.addChild(tilesprite)
                 }
                 
@@ -162,3 +198,4 @@ class GameScene: SKScene {
         }
     }
 }
+
