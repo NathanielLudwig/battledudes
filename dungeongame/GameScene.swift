@@ -24,21 +24,21 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
     var rightanimation: [SKTexture] = []
     let runningkey = "action_running"
     var levelmap:SKTileMapNode = SKTileMapNode()
-    var attackbutton = SKSpriteNode()
-    var sword = SKSpriteNode()
-    
-    
-    
+    var tile = SKTileDefinition()
+    var tilearray: [SKSpriteNode] = []
+
     override func didMove(to view: SKView) {
-        dude = self.childNode(withName: "dude") as! SKSpriteNode
         upbutton = camera?.childNode(withName: "up") as! SKSpriteNode
+        dude = self.childNode(withName: "dude") as! SKSpriteNode
         leftbutton = camera?.childNode(withName: "left") as! SKSpriteNode
         rightbutton = camera?.childNode(withName: "right") as! SKSpriteNode
         downbutton = camera?.childNode(withName: "down") as! SKSpriteNode
-        attackbutton = camera?.childNode(withName: "attack") as! SKSpriteNode
-        sword = dude.childNode(withName: "sword") as! SKSpriteNode
-        sword.position = CGPoint(x: dude.frame.midX, y: dude.frame.midY)
         
+        
+       
+        
+        dude.position = dudeData.dudeVars.position
+       
         for i in 0..<3 {
             upanimation.append(SKTexture(imageNamed: "up_\(i)"))
             downanimation.append(SKTexture(imageNamed: "down_\(i)"))
@@ -52,30 +52,16 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
             
         }
         givePhysicsBody(map: levelmap)
-        //sword.removeFromParent()
-        sword.isHidden = true
+        
+        
        
     }
     
-    func showsword(){
-        
-        let wait = SKAction.wait(forDuration: 0.5)
-        let show = SKAction.unhide()
-        let hide = SKAction.hide()
-        //sword.run(showaction)
-       
-        sword.run(SKAction.sequence([show,wait, hide]))
-       
-    }
    
     func handletouches(touches: Set<UITouch>){
         guard let touch = touches.first else {return}
         let touchlocation = touch.location(in: camera!)
-        if attackbutton.contains(touchlocation) {
-            
-            showsword()
-            
-        }
+        
         if upbutton.contains(touchlocation) {
             
             dudeVert = 1
@@ -84,7 +70,6 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
                                  timePerFrame: 0.1,
                                  resize: false,
                                  restore: false)), withKey: runningkey)
-            sword.zRotation = 0
         }
         if downbutton.contains(touchlocation){
             dudeVert = -1
@@ -93,9 +78,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
                                  timePerFrame: 0.1,
                                  resize: false,
                                  restore: false)), withKey: runningkey)
-            sword.zRotation = CGFloat.pi
-           
-        }
+     }
         if rightbutton.contains(touchlocation){
             dudeHorz = 1
             
@@ -105,7 +88,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
                                  resize: false,
                                  restore: false)))
             
-            sword.zRotation = -(CGFloat.pi / 2)
+
             
         
         }
@@ -119,6 +102,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
              
             
         }
+        
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        
@@ -144,7 +128,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
         
     }
     
-    
+
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         if dudeHorz == 0 && dudeVert == 0 {
@@ -154,12 +138,22 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
         dude.position.y += CGFloat(dudeVert)
         dude.position.x += CGFloat(dudeHorz)
         camera?.position = dude.position
-        if sword.isHidden == false{
-            
+        if dudeHorz != 0 || dudeVert != 0 {
+        for tile in tilearray{
+           
+            if tile.contains(dude.position){
+                let random = Int.random(in: 0 ..< 300)
+                if random <= 1{
+                    dudeData.dudeVars.position = dude.position
+                    let gameScene = GameScene(fileNamed:"battle")
+                    gameScene?.scaleMode = .aspectFit
+                    let reveal = SKTransition.fade(withDuration: 2)
+                    view!.presentScene(gameScene!, transition: reveal)
+
+                }
+            }
         }
-       
-        
-        
+        }
     }
     
     
@@ -174,28 +168,44 @@ class GameScene: SKScene , SKPhysicsContactDelegate{
             for row in 0..<map.numberOfRows {
                 
                 let tiledefintion = map.tileDefinition(atColumn: col, row: row)
+                let leftdefintion = map.tileDefinition(atColumn: col - 1, row: row)
+                let rightdefintion = map.tileDefinition(atColumn: col + 1, row: row)
+                let updefintion = map.tileDefinition(atColumn: col, row: row - 1)
+                let downdefintion = map.tileDefinition(atColumn: col, row: row + 1)
+                
+                tile = tiledefintion!
                 let x = CGFloat(col) * map.tileSize.width - halfwidth + (map.tileSize.width / 2)
                 let y = CGFloat(row) * map.tileSize.height - halfheight + (map.tileSize.height / 2)
                 if tiledefintion?.name == "stone_1"{
                     
                 }
-                if tiledefintion?.name == "wall" {
-                    
-                
-                let tilesprite = SKSpriteNode(color: UIColor.clear, size: map.tileSize)
-                tilesprite.position = CGPoint(x: x, y: y)
-                tilesprite.physicsBody = SKPhysicsBody(rectangleOf: map.tileSize)
-                tilesprite.physicsBody?.affectedByGravity = false
-                tilesprite.physicsBody?.pinned = true
-                tilesprite.physicsBody?.allowsRotation = false
-                tilesprite.physicsBody?.categoryBitMask = UInt32(2)
-                tilesprite.physicsBody?.collisionBitMask = UInt32(2)
-                self.addChild(tilesprite)
+               if tiledefintion?.name == "tallestGrass" {
+                let tallsprite = SKSpriteNode(color: UIColor.clear, size: map.tileSize)
+                tallsprite.position = CGPoint(x: x, y: y)
+                 self.addChild(tallsprite)
+                tilearray.append(tallsprite)
                 }
                 
+                if ((leftdefintion?.name == "grass" || rightdefintion?.name == "grass" || updefintion?.name == "grass" || downdefintion?.name == "grass") || (leftdefintion?.name == "tallestGrass" || rightdefintion?.name == "tallestGrass" || updefintion?.name == "tallestGrass" || downdefintion?.name == "tallestGrass")) && tiledefintion?.name == "bush" {
+                let bushsprite = SKSpriteNode(color: UIColor.clear, size: map.tileSize)
+                bushsprite.position = CGPoint(x: x, y: y)
+                
+                bushsprite.physicsBody = SKPhysicsBody(rectangleOf: map.tileSize)
+                bushsprite.physicsBody?.affectedByGravity = false
+                bushsprite.physicsBody?.pinned = true
+                bushsprite.physicsBody?.allowsRotation = false
+                bushsprite.physicsBody?.categoryBitMask = 1
+                bushsprite.physicsBody?.collisionBitMask = 1
+                bushsprite.physicsBody?.isDynamic = false
+                self.addChild(bushsprite)
+                }
+             
+               
+              
             }
            
         }
     }
+    
 }
 
